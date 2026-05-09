@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
@@ -43,5 +44,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Rute Kategori 
     Route::resource('categories', CategoryController::class);
 });
-
+Route::get('/cek-link', function () {
+    Artisan::call('storage:link');
+    return "Jembatan Storage Berhasil Dibuat!";
+});
 require __DIR__ . '/auth.php';
