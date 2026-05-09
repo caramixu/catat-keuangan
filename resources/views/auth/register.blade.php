@@ -17,7 +17,7 @@
             <div>
                 <label for="name" class="block font-semibold text-sm text-gray-700 mb-1">Nama Lengkap</label>
                 <input id="name"
-                    class="block w-full border-gray-300 focus:border-rose-500 focus:ring-rose-500 rounded-lg shadow-sm"
+                    class="block w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-lg shadow-sm"
                     type="text" name="name" :value="old('name')" required autofocus
                     placeholder="Masukkan nama..." />
                 <x-input-error :messages="$errors->get('name')" class="mt-1" />
@@ -26,7 +26,7 @@
             <div>
                 <label for="email" class="block font-semibold text-sm text-gray-700 mb-1">Email</label>
                 <input id="email"
-                    class="block w-full border-gray-300 focus:border-rose-500 focus:ring-rose-500 rounded-lg shadow-sm"
+                    class="block w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-lg shadow-sm"
                     type="email" name="email" :value="old('email')" required placeholder="email@contoh.com" />
                 <x-input-error :messages="$errors->get('email')" class="mt-1" />
             </div>
@@ -35,12 +35,12 @@
                 <label for="password" class="block font-semibold text-sm text-gray-700 mb-1">Password</label>
                 <div class="relative">
                     <input id="password"
-                        class="block w-full border-gray-300 focus:border-rose-500 focus:ring-rose-500 rounded-lg shadow-sm pr-10"
+                        class="block w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-lg shadow-sm pr-10"
                         :type="show ? 'text' : 'password'" name="password" required autocomplete="new-password"
                         placeholder="••••••••" />
 
                     <button type="button" @click="show = !show"
-                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-rose-500 focus:outline-none">
+                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-blue-500 focus:outline-none">
                         <svg x-show="!show" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -62,12 +62,12 @@
                     Password</label>
                 <div class="relative">
                     <input id="password_confirmation"
-                        class="block w-full border-gray-300 focus:border-rose-500 focus:ring-rose-500 rounded-lg shadow-sm pr-10"
+                        class="block w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-lg shadow-sm pr-10"
                         :type="show ? 'text' : 'password'" name="password_confirmation" required
                         autocomplete="new-password" placeholder="••••••••" />
 
                     <button type="button" @click="show = !show"
-                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-rose-500 focus:outline-none">
+                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-blue-500 focus:outline-none">
                         <svg x-show="!show" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -92,7 +92,7 @@
 
                 <p class="text-center text-sm text-gray-600 mt-2">
                     Sudah punya akun?
-                    <a class="text-rose-600 hover:text-rose-700 font-bold underline transition"
+                    <a class="text-blue-600 hover:text-blue-700 font-bold underline transition"
                         href="{{ route('login') }}">
                         Log in di sini
                     </a>

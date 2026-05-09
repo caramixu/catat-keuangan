@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('transactions', function (Blueprint $table) {
+        Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Hubungkan ke user
-            $table->string('description');
-            $table->decimal('amount', 12, 2);
-            $table->enum('type', ['income', 'expense']); // Pemasukan atau Pengeluaran
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('nama_kategori');
+            $table->enum('tipe', ['pemasukan', 'pengeluaran']); // Penanda jenis kategori
+            $table->text('deskripsi')->nullable(); // Boleh kosong
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('transactions');
+        Schema::dropIfExists('categories');
     }
 };

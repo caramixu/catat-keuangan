@@ -23,15 +23,26 @@
                 @csrf
 
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700">Email</label>
-                    <input id="email" type="email" name="email" :value="old('email')" required autofocus
-                        class="block mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    <label class="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Email</label>
+                    <input id="email" type="email" name="email" value="{{ old('email') }}" required
+                        class="block mt-1 w-full rounded-2xl border-slate-200 shadow-sm transition-all py-3 
+                        @error('email') border-rose-500 focus:ring-rose-500/10 @else focus:ring-indigo-500/10 focus:border-indigo-500 @enderror">
+
+                    @error('email')
+                        <p class="text-[10px] text-rose-600 font-bold mt-1 ml-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="mt-4">
-                    <label class="block text-sm font-semibold text-gray-700">Password</label>
-                    <input id="password" type="password" name="password" required
-                        class="block mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    <label
+                        class="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Password</label>
+                    <input id="password" type="password" name="password" required x-init="@if ($errors->has('password')) $el.focus() @endif"
+                        class="block mt-1 w-full rounded-2xl border-slate-200 shadow-sm transition-all py-3 
+                        @error('password') border-rose-500 focus:ring-rose-500/10 @else focus:ring-indigo-500/10 focus:border-indigo-500 @enderror">
+
+                    @error('password')
+                        <p class="text-[10px] text-rose-600 font-bold mt-1 ml-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="block mt-4">
@@ -44,18 +55,19 @@
 
                 <div class="flex items-center justify-end mt-8 gap-4">
                     <a href="{{ route('register') }}"
-                        class="text-sm font-bold text-gray-700 border-2 border-gray-200 px-4 py-2 rounded-lg hover:bg-gray-50 transition">
+                        class="text-sm font-bold text-white border-2 border-gray-200 px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-600 transition">
                         DAFTAR AKUN
                     </a>
                     <button type="submit"
-                        class="bg-slate-900 text-white font-bold text-sm px-6 py-2 rounded-lg hover:bg-slate-800 transition shadow-md">
+                        class="bg-blue-600 text-white font-bold text-sm px-6 py-2 rounded-lg hover:bg-blue-800 transition shadow-md">
                         LOG IN
                     </button>
                 </div>
 
                 <div class="mt-20 text-center">
                     <p class="text-xs text-gray-400 font-medium">
-                        Copyright © 2024 - <span class="text-rose-400 uppercase">Oh My Jajan - Caramixu</span>
+                        Copyright &copy; {{ date('Y') }} - <span class="text-rose-400 uppercase">Oh My Jajan -
+                            Caramixu</span>
                     </p>
                 </div>
             </form>
