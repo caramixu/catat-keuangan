@@ -7,11 +7,22 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Cloudinary\Cloudinary;
+use Cloudinary\Configuration\Configuration;
 
 class ProfileController extends Controller
 {
+    private function cloudinaryInstance()
+    {
+        $cloudName = env('CLOUDINARY_CLOUD_NAME');
+        $apiKey    = env('CLOUDINARY_API_KEY');
+        $apiSecret = env('CLOUDINARY_API_SECRET');
+
+        return new Cloudinary(
+            "cloudinary://{$apiKey}:{$apiSecret}@{$cloudName}"
+        );
+    }
     /**
      * Display the user's profile form.
      */
@@ -55,17 +66,15 @@ class ProfileController extends Controller
         $user->email = $request->email;
 
         if ($request->remove_photo == '1' && $user->profile_photo) {
-            if (Storage::disk('public')->exists($user->profile_photo)) {
-                Storage::disk('public')->delete($user->profile_photo);
-            }
             $user->profile_photo = null;
         }
 
         if ($request->hasFile('profile_photo')) {
-            if ($user->profile_photo && Storage::disk('public')->exists($user->profile_photo)) {
-                Storage::disk('public')->delete($user->profile_photo);
-            }
-            $user->profile_photo = $request->file('profile_photo')->store('profile_photos', 'public');
+            $result = $this->cloudinaryInstance()->uploadApi()->upload(
+                $request->file('profile_photo')->getRealPath(),
+                ['folder' => 'profile_photos']
+            );
+            $user->profile_photo = $result['secure_url'];
         }
 
         // Hanya update password di database jika kolom password baru memang diisi
