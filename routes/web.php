@@ -44,8 +44,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Rute Kategori 
     Route::resource('categories', CategoryController::class);
 });
-Route::get('/cek-link', function () {
-    Artisan::call('storage:link');
-    return "Jembatan Storage Berhasil Dibuat!";
-});
+
 require __DIR__ . '/auth.php';
+
+Route::get('/cek-link', function () {
+    try {
+        Artisan::call('storage:link');
+        return "Jembatan Storage Berhasil Dibuat!";
+    } catch (\Exception $e) {
+        return "Gagal: " . $e->getMessage();
+    }
+});

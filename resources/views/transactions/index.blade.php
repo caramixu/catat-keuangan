@@ -126,17 +126,19 @@
                                 <td class="px-6 py-4" x-data="{ openEditModal: false }">
                                     <div class="flex items-center justify-center gap-2">
                                         @if ($type == 'pengeluaran')
-                                            <button @click=openDetailModal=true;
-                                                detailImage = '{{ $trx->proof ? asset('storage/' . $trx->proof) : '' }}'; "
+                                            <button
+                                                @click="openDetailModal=true;
+                                                detailImage = '{{ $trx->proof ? Storage::url($trx->proof) : '' }}';"
                                                 class="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition"
                                                 title="Detail">
                                                 <svg class="w-6 h-6" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         stroke-width="2" d=" M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                            </svg>
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                </svg>
                                             </button>
                                         @endif
 
@@ -199,6 +201,8 @@
                                                     class="p-6 space-y-4 text-left">
                                                     @csrf
                                                     @method('PUT')
+                                                    <input type="hidden" name="remove_proof" x-ref="removeProof"
+                                                        value="0">
                                                     <div>
                                                         <label
                                                             class="block text-sm font-medium text-gray-700 mb-1 text-base">Tanggal</label>
@@ -240,11 +244,14 @@
                                                     @if ($type == 'pengeluaran')
                                                         <div>
                                                             <label
-                                                                class="block text-sm font-medium text-gray-700 mb-2 text-base">Ubah
-                                                                Bukti Transaksi</label>
+                                                                class="block text-sm font-medium text-gray-700 mb-2 text-base">
+                                                                Ubah Bukti Transaksi
+                                                            </label>
+
                                                             <div
                                                                 class="border border-gray-300 rounded-lg p-1 mb-4 bg-white">
                                                                 <input type="file" name="proof"
+                                                                    x-ref="imageInput"
                                                                     accept=".jpg,.png,image/jpeg,image/png"
                                                                     @change="editPreview = $event.target.files.length ? URL.createObjectURL($event.target.files[0]) : editPreview"
                                                                     class="w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:border file:border-gray-300 file:rounded file:text-sm file:bg-gray-100 hover:file:bg-gray-200 cursor-pointer">
@@ -252,10 +259,28 @@
 
                                                             <div
                                                                 class="mt-3 border border-gray-200 rounded-lg w-40 h-40 flex items-center justify-center bg-gray-50 overflow-hidden relative mx-auto">
+
                                                                 <template x-if="editPreview">
-                                                                    <img :src="editPreview"
-                                                                        class="w-full h-full object-contain">
+                                                                    <div class="w-full h-full relative">
+                                                                        <img :src="editPreview"
+                                                                            class="w-full h-full object-contain">
+
+                                                                        <button type="button"
+                                                                            @click="editPreview = null; $refs.imageInput.value = ''; $refs.removeProof.value = '1'"
+                                                                            class="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full shadow-lg hover:bg-red-600 transition-all transform hover:scale-110 flex items-center justify-center"
+                                                                            title="Hapus Gambar">
+                                                                            <svg class="w-4 h-4" fill="none"
+                                                                                stroke="currentColor"
+                                                                                viewBox="0 0 24 24">
+                                                                                <path stroke-linecap="round"
+                                                                                    stroke-linejoin="round"
+                                                                                    stroke-width="3"
+                                                                                    d="M6 18L18 6M6 6l12 12"></path>
+                                                                            </svg>
+                                                                        </button>
+                                                                    </div>
                                                                 </template>
+
                                                                 <template x-if="!editPreview">
                                                                     <span class="text-xs text-gray-400">NO IMAGE</span>
                                                                 </template>
@@ -318,7 +343,7 @@
                             </svg>
                         </button>
                     </div>
-                    <div class="p-6 flex flex-col items-center">
+                    <div class="p-6 pt-4 pb-2 flex flex-col items-center">
                         <template x-if="detailImage">
                             <div class="w-full flex flex-col items-center">
                                 <div
@@ -326,15 +351,6 @@
                                     <img :src="detailImage" class="max-w-full max-h-[70vh] object-contain"
                                         alt="Bukti Transaksi">
                                 </div>
-                                <a :href="detailImage" download
-                                    class="mt-4 inline-flex items-center text-base text-blue-600 hover:underline font-bold">
-                                    <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                                    </svg>
-                                    Unduh Gambar
-                                </a>
                             </div>
                         </template>
                         <template x-if="!detailImage">
@@ -349,9 +365,21 @@
                             </div>
                         </template>
                     </div>
-                    <div class="px-6 py-4 bg-gray-50 text-right">
-                        <button @click="openDetailModal = false"
-                            class="px-8 py-2 bg-gray-800 text-white rounded-xl font-bold hover:bg-gray-900 transition shadow-md">Tutup</button>
+                    <div class="px-6 py-4 pt-2 bg-gray-50 text-center">
+                        <template x-if="detailImage">
+                            <a :href="detailImage" download
+                                class="px-8 py-2 bg-gray-800 text-white rounded-xl font-bold hover:bg-gray-900 transition shadow-md inline-flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                </svg>
+                                Unduh Gambar
+                            </a>
+                        </template>
+                        <template x-if="!detailImage">
+                            <button @click="openDetailModal = false"
+                                class="px-8 py-2 bg-gray-800 text-white rounded-xl font-bold hover:bg-gray-900 transition shadow-md">Tutup</button>
+                        </template>
                     </div>
                 </div>
             </div>

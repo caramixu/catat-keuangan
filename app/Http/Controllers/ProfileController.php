@@ -54,6 +54,13 @@ class ProfileController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
 
+        if ($request->remove_photo == '1' && $user->profile_photo) {
+            if (Storage::disk('public')->exists($user->profile_photo)) {
+                Storage::disk('public')->delete($user->profile_photo);
+            }
+            $user->profile_photo = null;
+        }
+
         if ($request->hasFile('profile_photo')) {
             if ($user->profile_photo && Storage::disk('public')->exists($user->profile_photo)) {
                 Storage::disk('public')->delete($user->profile_photo);

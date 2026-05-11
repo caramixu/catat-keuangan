@@ -108,6 +108,11 @@ class TransactionController extends Controller
             'description' => $request->description,
         ];
 
+        if ($request->remove_proof == '1' && $transaction->proof) {
+            Storage::disk('public')->delete($transaction->proof);
+            $dataUpdate['proof'] = null;
+        }
+
         if ($request->hasFile('proof')) {
             if ($transaction->proof) {
                 Storage::disk('public')->delete($transaction->proof);

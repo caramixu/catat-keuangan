@@ -10,6 +10,8 @@
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -55,8 +57,7 @@
 
                 <div class="flex items-center gap-2 sm:gap-5">
 
-                    <button
-                        @click="!document.fullscreenElement ? document.documentElement.requestFullscreen() : document.exitFullscreen()"
+                    <button type="button" onclick="toggleFullScreen()"
                         class="p-2 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-blue-600 focus:outline-none transition-colors"
                         title="Toggle Fullscreen">
 
@@ -79,7 +80,7 @@
                         <x-slot name="trigger">
                             <button
                                 class="flex items-center gap-2 px-2 sm:px-3 py-1.5 border border-gray-200 rounded-full hover:bg-gray-50 transition">
-                                <img src="{{ Auth::user()->profile_photo ? asset('storage/' . Auth::user()->profile_photo) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) . '&background=6366f1&color=fff' }}"
+                                <img src="{{ Auth::user()->profile_photo ? Storage::url(Auth::user()->profile_photo) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) . '&background=6366f1&color=fff' }}"
                                     class="w-8 h-8 rounded-full object-cover border border-slate-200">
                                 <span
                                     class="hidden sm:block text-sm font-semibold text-slate-700">{{ Auth::user()->name }}</span>
@@ -135,6 +136,41 @@
                 showConfirmButton: false
             });
         @endif
+    </script>
+    <script>
+        function toggleFullScreen() {
+            var doc = window.document;
+            var docEl = doc.documentElement;
+
+            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl
+                .webkitRequestFullScreen || docEl.msRequestFullscreen;
+            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc
+                .msExitFullscreen;
+
+            if (!document.fullscreenEnabled && !document.webkitFullscreenEnabled) {
+                Swal.fire({
+                    title: 'Info Fullscreen',
+                    text: 'Di iPhone, gunakan fitur "Add to Home Screen" di Safari untuk tampilan penuh.',
+                    icon: 'info',
+                    confirmButtonText: 'Oke'
+                });
+                return; // Hentikan eksekusi kode di bawahnya
+            }
+
+            if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc
+                .msFullscreenElement) {
+                // Minta Fullscreen
+                if (requestFullScreen) {
+                    // Gunakan .call() agar konteksnya tetap pada elemen HTML utama
+                    requestFullScreen.call(docEl);
+                }
+            } else {
+                // Keluar Fullscreen
+                if (cancelFullScreen) {
+                    cancelFullScreen.call(doc);
+                }
+            }
+        }
     </script>
 </body>
 

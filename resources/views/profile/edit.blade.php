@@ -17,22 +17,108 @@
 
                 <div class="p-8 md:p-12 space-y-6">
 
-                    <div x-data="{ photoPreview: null }" class="flex flex-col md:flex-row items-center gap-8">
+                    <div x-data="{
+                        photoPreview: '{{ Auth::user()->profile_photo ? asset('storage/' . Auth::user()->profile_photo) : '' }}',
+                        removePhoto: false,
+                        defaultAvatar: 'https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=6366f1&color=fff',
+                        showCropModal: false,
+                        cropper: null,
+                        openCropper(file) {
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
+                                this.showCropModal = true;
+                                this.$nextTick(() => {
+                                    const image = document.getElementById('cropperImage');
+                                    image.src = e.target.result;
+                                    if (this.cropper) this.cropper.destroy();
+                                    this.cropper = new Cropper(image, {
+                                        aspectRatio: 1,
+                                        viewMode: 2,
+                                        movable: true,
+                                        zoomable: true,
+                                        rotatable: true,
+                                        scalable: true,
+                                        cropBoxResizable: true,
+                                    });
+                                });
+                            };
+                            reader.readAsDataURL(file);
+                        },
+                        saveCrop() {
+                            const canvas = this.cropper.getCroppedCanvas({ width: 400, height: 400 });
+                            canvas.toBlob((blob) => {
+                                const file = new File([blob], 'profile.jpg', { type: 'image/jpeg' });
+                                const dt = new DataTransfer();
+                                dt.items.add(file);
+                                this.$refs.photoInput.files = dt.files;
+                                this.photoPreview = canvas.toDataURL('image/jpeg');
+                                this.removePhoto = false;
+                                this.showCropModal = false;
+                                this.cropper.destroy();
+                            }, 'image/jpeg', 0.9);
+                        }
+                    }" class="flex flex-col md:flex-row items-center gap-8">
+
+                        <input type="file" name="profile_photo" x-ref="photoInput" class="hidden"
+                            accept=".jpg,.png,image/jpeg,image/png"
+                            @change="if ($event.target.files[0]) openCropper($event.target.files[0])">
+                        <input type="hidden" name="remove_photo" :value="removePhoto ? '1' : '0'">
+
+                        {{-- Preview Foto --}}
                         <div class="relative">
-                            <template x-if="!photoPreview">
-                                <img src="{{ Auth::user()->profile_photo ? asset('storage/' . Auth::user()->profile_photo) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) . '&background=6366f1&color=fff' }}"
-                                    class="w-32 h-32 rounded-[2.5rem] object-cover border-4 border-slate-50 shadow-lg">
-                            </template>
-                            <template x-if="photoPreview">
-                                <img :src="photoPreview"
-                                    class="w-32 h-32 rounded-[2.5rem] object-cover border-4 border-slate-50 shadow-lg">
-                            </template>
+                            <img :src="photoPreview || defaultAvatar"
+                                class="w-32 h-32 rounded-[2.5rem] object-cover border-4 border-slate-50 shadow-lg">
                         </div>
+
                         <div class="flex-1 text-center md:text-left">
-                            <h3 class="text-xl font-bold text-slate-800 mb-2">Foto Profil</h3>
-                            <input type="file" name="profile_photo"
-                                @change="const file = $event.target.files[0]; if (file) { const reader = new FileReader(); reader.onload = (e) => { photoPreview = e.target.result; }; reader.readAsDataURL(file); }"
-                                class="text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-6 file:rounded-xl file:border-0 file:text-xs file:font-black file:uppercase file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100 cursor-pointer transition-all">
+                            <h3 class="text-xl font-bold text-slate-800 mb-3">Foto Profil</h3>
+                            <div class="flex gap-2 justify-center md:justify-start">
+                                <button type="button" @click="$refs.photoInput.click()"
+                                    class="px-4 py-2 bg-indigo-50 text-indigo-600 text-sm font-bold rounded-xl hover:bg-indigo-100 transition">
+                                    Ubah Foto
+                                </button>
+                                <button type="button"
+                                    @click="photoPreview = ''; removePhoto = true; $refs.photoInput.value = ''"
+                                    class="px-4 py-2 bg-rose-50 text-rose-500 text-sm font-bold rounded-xl hover:bg-rose-100 transition">
+                                    Hapus Foto
+                                </button>
+                            </div>
+                        </div>
+
+                        {{-- Modal Crop --}}
+                        <div x-show="showCropModal" x-cloak
+                            class="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+                            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+                                <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                                    <h3 class="font-bold text-slate-800">Sesuaikan Foto</h3>
+                                    <button type="button" @click="showCropModal = false; cropper.destroy()"
+                                        class="text-gray-400 hover:text-gray-600">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                {{-- Area Cropper --}}
+                                <div class="p-4 bg-gray-50">
+                                    <div class="max-h-72 overflow-hidden flex items-center justify-center">
+                                        <img id="cropperImage" class="max-w-full">
+                                    </div>
+                                </div>
+
+                                <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3">
+                                    <button type="button"
+                                        @click="showCropModal = false; cropper.destroy(); $refs.photoInput.value = ''"
+                                        class="px-5 py-2 bg-gray-100 text-gray-600 rounded-xl font-bold text-sm hover:bg-gray-200 transition">
+                                        Batal
+                                    </button>
+                                    <button type="button" @click="saveCrop()"
+                                        class="px-5 py-2 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition">
+                                        Gunakan Foto
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
