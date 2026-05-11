@@ -128,7 +128,7 @@
                                         @if ($type == 'pengeluaran')
                                             <button
                                                 @click="openDetailModal=true;
-                                                detailImage = '{{ $trx->proof }}';"
+                                                detailImage = '{{ $trx->proof && str_starts_with($trx->proof, 'http') ? $trx->proof : '' }}';"
                                                 class="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition"
                                                 title="Detail">
                                                 <svg class="w-6 h-6" fill="none" stroke="currentColor"
@@ -177,7 +177,7 @@
                                     </div>
 
                                     <template x-teleport="body">
-                                        <div x-show="openEditModal" x-data="{ editPreview: '{{ $trx->proof }}' }"
+                                        <div x-show="openEditModal" x-data="{ editPreview: '{{ $trx->proof && str_starts_with($trx->proof, 'http') ? $trx->proof : '' }}' }"
                                             class="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-slate-900/50 backdrop-blur-sm"
                                             style="display: none;">
                                             <div @click.away="openEditModal = false"
