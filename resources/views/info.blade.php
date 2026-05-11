@@ -20,7 +20,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
-                    Versi 1.0.0 (Beta)
+                    Versi 1.0.6 (Beta)
                 </div>
                 <p class="text-gray-600 leading-relaxed text-base md:text-lg">
                     OMJ adalah aplikasi pencatatan keuangan pribadi yang dirancang khusus untuk membantumu melacak

@@ -128,7 +128,7 @@
                                         @if ($type == 'pengeluaran')
                                             <button
                                                 @click="openDetailModal=true;
-                                                detailImage = '{{ $trx->proof ? Storage::url($trx->proof) : '' }}';"
+                                                detailImage = '{{ $trx->proof }}';"
                                                 class="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition"
                                                 title="Detail">
                                                 <svg class="w-6 h-6" fill="none" stroke="currentColor"
@@ -177,7 +177,7 @@
                                     </div>
 
                                     <template x-teleport="body">
-                                        <div x-show="openEditModal" x-data="{ editPreview: '{{ $trx->proof ? asset('storage/' . $trx->proof) : '' }}' }"
+                                        <div x-show="openEditModal" x-data="{ editPreview: '{{ $trx->proof }}' }"
                                             class="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-slate-900/50 backdrop-blur-sm"
                                             style="display: none;">
                                             <div @click.away="openEditModal = false"
@@ -247,7 +247,6 @@
                                                                 class="block text-sm font-medium text-gray-700 mb-2 text-base">
                                                                 Ubah Bukti Transaksi
                                                             </label>
-
                                                             <div
                                                                 class="border border-gray-300 rounded-lg p-1 mb-4 bg-white">
                                                                 <input type="file" name="proof"
@@ -289,7 +288,7 @@
                                                     @endif
                                                     <div class="flex justify-end gap-3 pt-4 border-t">
                                                         <button type="button"
-                                                            @click="openEditModal = false; $refs['editForm' + {{ $trx->id }}].reset(); editPreview = '{{ $trx->proof ? asset('storage/' . $trx->proof) : '' }}'"
+                                                            @click="openEditModal = false; $refs['editForm' + {{ $trx->id }}].reset(); editPreview = '{{ $trx->proof }}'; $refs.removeProof.value = '0'"
                                                             class="px-6 py-2 text-gray-600 bg-gray-100 rounded-xl text-base font-medium">
                                                             Batal
                                                         </button>

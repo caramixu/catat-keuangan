@@ -6,10 +6,21 @@ use App\Models\Transaction;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+use Cloudinary\Cloudinary;
+use Cloudinary\Configuration\Configuration;
 
 class TransactionController extends Controller
 {
+    private function cloudinaryInstance()
+    {
+        $cloudName = env('CLOUDINARY_CLOUD_NAME');
+        $apiKey    = env('CLOUDINARY_API_KEY');
+        $apiSecret = env('CLOUDINARY_API_SECRET');
+
+        return new Cloudinary(
+            "cloudinary://{$apiKey}:{$apiSecret}@{$cloudName}"
+        );
+    }
     public function index(Request $request)
     {
         $perPage = $request->input('per_page', 10);
@@ -69,9 +80,14 @@ class TransactionController extends Controller
             'proof'       => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
         ]);
 
-        $proofPath = $request->hasFile('proof')
-            ? $request->file('proof')->store('transaction_proofs', 'public')
-            : null;
+        $proofPath = null;
+        if ($request->hasFile('proof')) {
+            $result = $this->cloudinaryInstance()->uploadApi()->upload(
+                $request->file('proof')->getRealPath(),
+                ['folder' => 'transactions']
+            );
+            $proofPath = $result['secure_url'];
+        }
 
         Transaction::create([
             'user_id'     => Auth::id(),
@@ -108,16 +124,16 @@ class TransactionController extends Controller
             'description' => $request->description,
         ];
 
-        if ($request->remove_proof == '1' && $transaction->proof) {
-            Storage::disk('public')->delete($transaction->proof);
+        if ($request->remove_proof == '1') {
             $dataUpdate['proof'] = null;
         }
 
         if ($request->hasFile('proof')) {
-            if ($transaction->proof) {
-                Storage::disk('public')->delete($transaction->proof);
-            }
-            $dataUpdate['proof'] = $request->file('proof')->store('transaction_proofs', 'public');
+            $result = $this->cloudinaryInstance()->uploadApi()->upload(
+                $request->file('proof')->getRealPath(),
+                ['folder' => 'transactions']
+            );
+            $dataUpdate['proof'] = $result['secure_url'];
         }
 
         $transaction->update($dataUpdate);
