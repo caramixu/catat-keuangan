@@ -18,7 +18,7 @@
                 <div class="p-8 md:p-12 space-y-6">
 
                     <div x-data="{
-                        photoPreview: '{{ Auth::user()->profile_photo ? asset('storage/' . Auth::user()->profile_photo) : '' }}',
+                        photoPreview: '{{ Auth::user()->profile_photo && str_starts_with(Auth::user()->profile_photo, 'http') ? Auth::user()->profile_photo : '' }}',
                         removePhoto: false,
                         defaultAvatar: 'https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=6366f1&color=fff',
                         showCropModal: false,

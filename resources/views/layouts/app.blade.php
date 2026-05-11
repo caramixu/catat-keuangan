@@ -80,7 +80,7 @@
                         <x-slot name="trigger">
                             <button
                                 class="flex items-center gap-2 px-2 sm:px-3 py-1.5 border border-gray-200 rounded-full hover:bg-gray-50 transition">
-                                <img src="{{ Auth::user()->profile_photo ? Storage::url(Auth::user()->profile_photo) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) . '&background=6366f1&color=fff' }}"
+                                <img src="{{ Auth::user()->profile_photo && str_starts_with(Auth::user()->profile_photo, 'http') ? Auth::user()->profile_photo : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) . '&background=6366f1&color=fff' }}"
                                     class="w-8 h-8 rounded-full object-cover border border-slate-200">
                                 <span
                                     class="hidden sm:block text-sm font-semibold text-slate-700">{{ Auth::user()->name }}</span>
